@@ -8,6 +8,7 @@ const Home = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [obj , setObj] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [numbers , setNumbers] = useState([1 , 2 , 3]);
 
   const API_KEY = 'jCTIVwOIgt5tMxCRtaWm_CJEhvdQlFem3jy3REPOHCY';
 
@@ -17,7 +18,7 @@ const Home = () => {
     // Fetch photos when the component mounts
     fetchPhotos();
 
-  }, [searchTerm]);
+  }, [searchTerm , numbers]);
 
 
   // Feching the photos
@@ -99,6 +100,45 @@ const Home = () => {
     setObj({});
   };
 
+  // For pagination
+  // Onclicking a pageNumber
+
+  const onClickNums = async(e) => {
+    const page = e.currentTarget.id;
+    try {
+      const response = await axios.get(
+        `https://api.unsplash.com/photos?page=${page}&client_id=${API_KEY}`
+      );
+      setPhotos(response.data);
+    } catch (error) {
+      console.error('Error fetching photos: ', error);
+    }
+  }
+
+   // Onclicking a Prev
+
+  const onClickPrev = () => {
+    if(numbers[0] > 1){
+      let num1 = numbers[0]
+      let num2 = numbers[1];
+      let num3 = numbers[2]
+      setNumbers([num1 - 3 , num2 - 3 , num3 - 3])
+    }
+    else alert("You Cannot Go previous")
+  }
+
+   // Onclicking a Next
+
+  const onClickNext = () => {
+    if(numbers[2] <= 997){
+      let num1 = numbers[0]
+      let num2 = numbers[1];
+      let num3 = numbers[2]
+      setNumbers([num1 + 3 , num2 + 3 , num3 + 3])
+    }
+    else alert("You Cannot Go next")
+  }
+
   return (
     <div>
         {/* Search Bar */}
@@ -149,6 +189,21 @@ const Home = () => {
           </button>
         </div>
       </Modal>
+
+      {/* Pagination */}
+      <div className='pagi-container'>
+        <button id='prev' onClick={onClickPrev}>
+          prev
+        </button>
+        {numbers.map((number) => (
+            <div className='pagi-number' key={number} id={number} onClick={onClickNums}>
+              {number}
+            </div>
+        ))}
+        <button id='next' onClick={onClickNext}>
+          Next
+        </button>
+    </div>
     </div>
   )
 }
